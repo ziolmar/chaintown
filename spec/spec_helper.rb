@@ -1,5 +1,9 @@
-require "bundler/setup"
-require "chaintown"
+require 'bundler/setup'
+require 'chaintown'
+require 'chaintown/steps'
+require 'chaintown/step'
+require 'chaintown/state'
+require 'chaintown/chain'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
