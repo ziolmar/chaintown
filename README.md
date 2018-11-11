@@ -35,7 +35,7 @@ The module define constructor which require two arguments. State and params. Sta
 AnyService.new(Chaintown::State.new, params1: 'value')
 ```
 
-The Chain module also provide DSL for defining steps. Every step is a method inside the class. Inside every method you have access to state and params.
+The Chain module also provide DSL for defining steps. Every step is a method inside the class or a class which define method `call` and it's constructor receive state and params arguments. Inside every method you have access to state and params.
 
 ```ruby
   step :step1

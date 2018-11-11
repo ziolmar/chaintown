@@ -2,15 +2,11 @@ module Chaintown
   class Step
     include Chaintown::Steps
 
-    attr_reader :method_name
+    attr_reader :step_handler
     attr_accessor :if_condition
 
-    def initialize(method_name)
-      @method_name = method_name
-    end
-
-    def steps
-      @steps ||= []
+    def initialize(step_handler)
+      @step_handler = step_handler
     end
   end
 end

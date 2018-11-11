@@ -58,12 +58,16 @@ module Chaintown
 
     def perform_step(step)
       if step.steps.present?
-        method(step.method_name).call do
+        handler(step).call do
           perform_steps(step.steps, step.failed_steps)
         end
       else
-        method(step.method_name).call
+        handler(step).call
       end
+    end
+
+    def handler(step)
+      step.step_handler.is_a?(Symbol) ? method(step.step_handler) : step.step_handler.new(state, params)
     end
   end
 end

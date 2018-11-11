@@ -7,6 +7,17 @@ RSpec.describe Chaintown do
   end
 
   describe Chaintown::Chain do
+    class Step6Handler
+      attr_reader :state, :params
+
+      def initialize(state, params)
+        @state, @params = state, params
+      end
+
+      def call
+      end
+    end
+
     class ChainService
       include Chaintown::Chain
 
@@ -15,6 +26,7 @@ RSpec.describe Chaintown do
       step :step3, if: proc { |_state, params| params[:run_step_3] }
       step :step4 do
         step :step5
+        step Step6Handler
       end
 
       [:step1, :step2, :step3, :step5].each do |method_name|
@@ -35,6 +47,7 @@ RSpec.describe Chaintown do
       expect(service).to receive(:step3).and_call_original
       expect(service).to receive(:step4).and_call_original
       expect(service).to receive(:step5).and_call_original
+      expect_any_instance_of(Step6Handler).to receive(:call).and_call_original
 
       service.perform
     end

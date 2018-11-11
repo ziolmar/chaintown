@@ -7,11 +7,11 @@ module Chaintown
         attr_writer :steps, :failed_steps
 
         define_method(:steps) do
-          instance_variable_get(:@steps) || []
+          instance_variable_get(:@steps) || instance_variable_set(:@steps, [])
         end
 
         define_method(:failed_steps) do
-          instance_variable_get(:@failed_steps) || []
+          instance_variable_get(:@failed_steps) || instance_variable_set(:@failed_steps, [])
         end
       end
     end
@@ -23,18 +23,18 @@ module Chaintown
       end
     end
 
-    def step(method_name, **params, &block)
-      steps << init_step(method_name, params, &block)
+    def step(step_handler, **params, &block)
+      steps << init_step(step_handler, params, &block)
     end
 
-    def failed_step(method_name, **params, &block)
-      failed_steps << init_step(method_name, params, &block)
+    def failed_step(step_handler, **params, &block)
+      failed_steps << init_step(step_handler, params, &block)
     end
 
   private
 
-    def init_step(method_name, params = {}, &block)
-      Chaintown::Step.new(method_name).tap do |new_step|
+    def init_step(step_handler, params = {}, &block)
+      Chaintown::Step.new(step_handler).tap do |new_step|
         new_step.if_condition = params[:if] if params.present?
         new_step.instance_eval(&block) if block_given?
       end
