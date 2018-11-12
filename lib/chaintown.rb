@@ -1,5 +1,6 @@
 require 'active_support/all'
 require 'chaintown/version'
+require 'chaintown/callbacks'
 require 'chaintown/steps'
 require 'chaintown/step'
 require 'chaintown/state'

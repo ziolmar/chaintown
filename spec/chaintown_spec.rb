@@ -21,6 +21,10 @@ RSpec.describe Chaintown do
     class ChainService
       include Chaintown::Chain
 
+      before_step_action :before_every_step_action
+      after_step_action :after_every_step_action
+      around_step_action :around_every_step_action
+
       step :step1
       step :step2, if: proc { |_state, params| params[:run_step_2] }
       step :step3, if: proc { |_state, params| params[:run_step_3] }
@@ -36,6 +40,20 @@ RSpec.describe Chaintown do
 
       def step4
         yield
+      end
+
+      def before_every_step_action
+        puts "before action"
+      end
+
+      def after_every_step_action
+        puts 'after action'
+      end
+
+      def around_every_step_action
+        puts 'before around'
+        yield
+        puts 'after around'
       end
     end
 

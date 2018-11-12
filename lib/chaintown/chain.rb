@@ -26,6 +26,7 @@ module Chaintown
 
     included do
       self.extend Chaintown::Steps
+      self.include Chaintown::Callbacks
 
       attr_reader :state, :params
       delegate :steps, :failed_steps, to: :class
@@ -57,13 +58,17 @@ module Chaintown
     end
 
     def perform_step(step)
+      run_before_actions
       if step.steps.present?
-        handler(step).call do
-          perform_steps(step.steps, step.failed_steps)
+        with_around_actions do
+          handler(step).call do
+            perform_steps(step.steps, step.failed_steps)
+          end
         end
       else
         handler(step).call
       end
+      run_after_actions
     end
 
     def handler(step)

@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'chaintown'
+require 'chaintown/callbacks'
 require 'chaintown/steps'
 require 'chaintown/step'
 require 'chaintown/state'
