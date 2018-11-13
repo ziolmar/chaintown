@@ -1,4 +1,5 @@
 require 'bundler/setup'
+require 'pry'
 require 'chaintown'
 require 'chaintown/callbacks'
 require 'chaintown/steps'

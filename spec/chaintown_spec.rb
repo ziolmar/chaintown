@@ -43,29 +43,31 @@ RSpec.describe Chaintown do
       end
 
       def before_every_step_action
-        puts "before action"
       end
 
       def after_every_step_action
-        puts 'after action'
       end
 
       def around_every_step_action
-        puts 'before around'
         yield
-        puts 'after around'
       end
     end
 
     it 'should run chain of methods properly' do
       service = ChainService.new(Chaintown::State.new, run_step_2: false, run_step_3: true)
 
+      # steps
       expect(service).to receive(:step1).and_call_original
       expect(service).to_not receive(:step2)
       expect(service).to receive(:step3).and_call_original
       expect(service).to receive(:step4).and_call_original
       expect(service).to receive(:step5).and_call_original
       expect_any_instance_of(Step6Handler).to receive(:call).and_call_original
+
+      # callbacks
+      expect(service).to receive(:before_every_step_action).exactly(5).times.and_call_original
+      expect(service).to receive(:after_every_step_action).exactly(5).times.and_call_original
+      expect(service).to receive(:around_every_step_action).exactly(5).times.and_call_original
 
       service.perform
     end

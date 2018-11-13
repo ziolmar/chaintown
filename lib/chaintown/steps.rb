@@ -2,6 +2,9 @@
 # All steps are of type Chaintown::Step.
 module Chaintown
   module Steps
+
+    # When module is included we want to make steps and failed_steps
+    # instance variables
     def self.included(base)
       base.class_eval do
         attr_writer :steps, :failed_steps
@@ -16,6 +19,9 @@ module Chaintown
       end
     end
 
+    # When module is extended we want to make steps and failed steps
+    # variabled of specific class type, so every class will have its own
+    # list of steps
     def self.extended(base)
       base.class_eval do
         class_attribute :steps, default: []

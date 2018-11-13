@@ -29,6 +29,7 @@ module Chaintown
       self.include Chaintown::Callbacks
 
       attr_reader :state, :params
+      attr_accessor :current_step
       delegate :steps, :failed_steps, to: :class
     end
 
@@ -39,6 +40,12 @@ module Chaintown
     def perform
       perform_steps(steps, failed_steps)
       state
+    end
+
+  protected
+
+    def current_step_name
+      current_step&.step_handler.to_s
     end
 
   private
@@ -58,15 +65,17 @@ module Chaintown
     end
 
     def perform_step(step)
+      self.current_step = step # set step to use in callbacks
       run_before_actions
-      if step.steps.present?
-        with_around_actions do
+      with_around_actions do
+        if step.steps.present?
           handler(step).call do
             perform_steps(step.steps, step.failed_steps)
+            self.current_step = step # set proper step to use in callbacks after processing nested steps
           end
+        else
+          handler(step).call
         end
-      else
-        handler(step).call
       end
       run_after_actions
     end
