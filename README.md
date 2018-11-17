@@ -35,7 +35,7 @@ The module define constructor which require two arguments. State and params. Sta
 AnyService.new(Chaintown::State.new, params1: 'value')
 ```
 
-The Chain module also provide DSL for defining steps. Every step is a method inside the class or a class which define method `call` and it's constructor receive state and params arguments. Inside every method you have access to state and params.
+The Chain module also provide DSL for defining steps. Every step is a method inside the class Inside every method you have access to state and params.
 
 ```ruby
   step :step1
@@ -65,10 +65,10 @@ You can simply nest the steps by using `yield` inside your step.
   end
 ```
 
-There is also a way to run step based on some condition by using `if` argument.
+There is also a way to run step based on some condition by using `if` argument. In the if block there is an access to all instance variables, state, params and current_step.
 
 ```ruby
-  step :step1, if: proc { |state, params| params[:run_step_1] }
+  step :step1, if: proc { params[:run_step_1] }
 ```
 
 If in any step you set the state `valid` param to false the process will be terminated and no other steps will be called instead the process will be moved to alternative flow defined by failed steps.
@@ -88,6 +88,28 @@ If in any step you set the state `valid` param to false the process will be term
 
   def step3
     puts 'handle invalid state'
+  end
+```
+In case you would like to add callbacks to the steps, for example to log some data to logs or send process to monitoring service you can define before, after and around actions.
+
+```ruby
+  before_step_action :before_action_1, :before_action_2
+  after_step_action :after_action_1
+  around_step_action :around_action_1
+
+  def before_action_1
+    logger("Start #{current_step_name}")
+  end
+
+  def after_action_1
+    logger(state.inspect)
+  end
+
+  def around_step_action_1
+    statsd = Datadog::Statsd.new('localhost', 8125)
+    statsd.batch do
+      yield
+    end
   end
 ```
 

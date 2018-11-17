@@ -53,12 +53,12 @@ module Chaintown
     def perform_steps(steps, failed_steps)
       steps.each do |step|
         break unless state.valid?
-        next unless step.if_condition.blank? || step.if_condition.call(state, params)
+        next unless step.if_condition.blank? || self.instance_exec(&step.if_condition)
         perform_step(step)
       end
       unless state.valid?
         failed_steps.each do |step|
-          next unless step.if_condition.blank? || step.if_condition.call(state, params)
+          next unless step.if_condition.blank? || self.instance_exec(&step.if_condition)
           perform_step(step)
         end
       end
@@ -69,19 +69,15 @@ module Chaintown
       run_before_actions
       with_around_actions do
         if step.steps.present?
-          handler(step).call do
+          method(step.step_handler).call do
             perform_steps(step.steps, step.failed_steps)
             self.current_step = step # set proper step to use in callbacks after processing nested steps
           end
         else
-          handler(step).call
+          method(step.step_handler).call
         end
       end
       run_after_actions
-    end
-
-    def handler(step)
-      step.step_handler.is_a?(Symbol) ? method(step.step_handler) : step.step_handler.new(state, params)
     end
   end
 end

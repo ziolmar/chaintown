@@ -11,16 +11,16 @@ module Chaintown
     end
 
     class_methods do
-      def before_step_action(callback)
-        before_step_actions << callback
+      def before_step_action(*callbacks)
+        before_step_actions.concat(callbacks)
       end
 
-      def after_step_action(callback)
-        after_step_actions << callback
+      def after_step_action(*callbacks)
+        after_step_actions.concat(callbacks)
       end
 
-      def around_step_action(callback)
-        around_step_actions << callback
+      def around_step_action(*callbacks)
+        around_step_actions.concat(callbacks)
       end
     end
 

@@ -7,30 +7,18 @@ RSpec.describe Chaintown do
   end
 
   describe Chaintown::Chain do
-    class Step6Handler
-      attr_reader :state, :params
-
-      def initialize(state, params)
-        @state, @params = state, params
-      end
-
-      def call
-      end
-    end
-
     class ChainService
       include Chaintown::Chain
 
-      before_step_action :before_every_step_action
-      after_step_action :after_every_step_action
-      around_step_action :around_every_step_action
+      before_step_action :before_action_1, :before_action_2
+      after_step_action :after_action
+      around_step_action :around_action
 
       step :step1
-      step :step2, if: proc { |_state, params| params[:run_step_2] }
-      step :step3, if: proc { |_state, params| params[:run_step_3] }
+      step :step2, if: proc { params[:run_step_2] }
+      step :step3, if: proc { params[:run_step_3] }
       step :step4 do
         step :step5
-        step Step6Handler
       end
 
       [:step1, :step2, :step3, :step5].each do |method_name|
@@ -42,13 +30,16 @@ RSpec.describe Chaintown do
         yield
       end
 
-      def before_every_step_action
+      def before_action_1
       end
 
-      def after_every_step_action
+      def before_action_2
       end
 
-      def around_every_step_action
+      def after_action
+      end
+
+      def around_action
         yield
       end
     end
@@ -62,12 +53,12 @@ RSpec.describe Chaintown do
       expect(service).to receive(:step3).and_call_original
       expect(service).to receive(:step4).and_call_original
       expect(service).to receive(:step5).and_call_original
-      expect_any_instance_of(Step6Handler).to receive(:call).and_call_original
 
       # callbacks
-      expect(service).to receive(:before_every_step_action).exactly(5).times.and_call_original
-      expect(service).to receive(:after_every_step_action).exactly(5).times.and_call_original
-      expect(service).to receive(:around_every_step_action).exactly(5).times.and_call_original
+      expect(service).to receive(:before_action_1).exactly(4).times.and_call_original
+      expect(service).to receive(:before_action_2).exactly(4).times.and_call_original
+      expect(service).to receive(:after_action).exactly(4).times.and_call_original
+      expect(service).to receive(:around_action).exactly(4).times.and_call_original
 
       service.perform
     end
