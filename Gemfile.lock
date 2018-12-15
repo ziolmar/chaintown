@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    chaintown (0.1.3)
+    chaintown (0.1.4)
       activesupport (~> 5)
 
 GEM
@@ -13,7 +13,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     coderay (1.1.2)
-    concurrent-ruby (1.1.3)
+    concurrent-ruby (1.1.4)
     diff-lcs (1.3)
     i18n (1.2.0)
       concurrent-ruby (~> 1.0)
