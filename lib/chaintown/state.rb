@@ -1,6 +1,6 @@
 module Chaintown
   class State
-    attr_accessor :result, :valid, :enroll_type, :enroll_count, :schedule
+    attr_accessor :result, :valid
     alias_method :valid?, :valid
 
     def initialize
