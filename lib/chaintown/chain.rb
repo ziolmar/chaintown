@@ -33,7 +33,7 @@ module Chaintown
       delegate :steps, :failed_steps, to: :class
     end
 
-    def initialize(state, params)
+    def initialize(state, params = {})
       @state, @params = state, params.freeze
     end
 

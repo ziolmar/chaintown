@@ -62,5 +62,57 @@ RSpec.describe Chaintown do
 
       service.perform
     end
+
+    describe 'inheritance' do
+
+      class BaseChain
+        include Chaintown::Chain
+
+        step :step1
+
+        def step1
+        end
+      end
+
+      class EmptyChainService < BaseChain
+      end
+
+      class AdditionalStepsChainService < BaseChain
+        step :step2
+
+        def step2
+        end
+      end
+
+      it 'inherits from base class' do
+        service = EmptyChainService.new(Chaintown::State.new)
+
+        expect(service).to receive(:step1).and_call_original
+
+        service.perform
+      end
+
+      it 'defines steps only on child class' do
+        service = AdditionalStepsChainService.new(Chaintown::State.new)
+
+        expect(service).to receive(:step1).and_call_original
+        expect(service).to receive(:step2).and_call_original
+
+        service.perform
+      end
+
+      it 'adds steps only to one child class' do
+        service1 = AdditionalStepsChainService.new(Chaintown::State.new)
+        service2 = EmptyChainService.new(Chaintown::State.new)
+
+        expect(service1).to receive(:step1).and_call_original
+        expect(service1).to receive(:step2).and_call_original
+        expect(service2).to receive(:step1).and_call_original
+        expect(service2).not_to receive(:step2).and_call_original
+
+        service1.perform
+        service2.perform
+      end
+    end
   end
 end
