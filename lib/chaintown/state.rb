@@ -5,7 +5,6 @@ module Chaintown
 
     def initialize
       @valid = true
-      @enroll_count = 0
     end
 
     def failed(result)
